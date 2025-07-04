@@ -1,6 +1,6 @@
 const config = {
-  appName: "证的后宫",
-  apiPrefix: "http://localhost:3000",
+  appName: "聊天室",
+  apiPrefix: "/api/apis",
 };
 
 export default config;

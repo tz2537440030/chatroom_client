@@ -1,1 +1,54 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+/* flex横竖居中 */
+.flex-center {
+  @apply flex items-center justify-center;
+}
+
+/* 登录页背景动画和文字动画 */
+@layer utilities {
+  .animate-bg-scroll {
+    animation: bg-scroll 5s linear infinite alternate;
+  }
+
+  .animate-gradient-x {
+    animation: gradient-x 8s ease-in-out infinite alternate;
+  }
+
+  .bg-size-400 {
+    background-size: 400% 400%;
+  }
+}
+
+@keyframes bg-scroll {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
+}
+
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}

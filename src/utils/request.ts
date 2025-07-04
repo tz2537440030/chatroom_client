@@ -1,5 +1,6 @@
 import axios from "axios";
 import config from "@/config";
+import { Toast } from "antd-mobile";
 
 const statusTips: any = {
   400: "请求错误",
@@ -30,13 +31,19 @@ request.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 request.interceptors.response.use(
   (response) => {
     const { data } = response;
     if (response.status === 200 && data.code === 0) {
+      if (data.message) {
+        Toast.show({
+          content: data.message,
+          position: "top",
+        });
+      }
       return data.data;
     } else {
       return Promise.reject(data.msg || "error");
@@ -52,7 +59,7 @@ request.interceptors.response.use(
       console.log(statusTips[status]);
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default request;

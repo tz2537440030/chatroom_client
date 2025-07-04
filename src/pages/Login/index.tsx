@@ -1,7 +1,11 @@
 import useRequest from "@/hooks/useRequest";
 import { login } from "@/services/global";
 import { useState } from "react";
-import { Button, Form, Input } from "antd-mobile";
+import AuthInput from "@/components/AuthInput";
+import config from "@/config";
+import { Button } from "antd-mobile";
+import AuthLayout from "@/pages/Layouts/AuthLayout";
+import { useNavigate } from "react-router-dom";
 
 interface LoginParams {
   username: string;
@@ -9,14 +13,16 @@ interface LoginParams {
 }
 
 const Login = () => {
+  const navigate = useNavigate();
   const [loginParams, setLoginParams] = useState<LoginParams>({
     username: "",
     password: "",
   });
+
   const { data, loading, error, run } = useRequest<LoginParams, any>(login, {
     manual: true,
-    onSuccess: () => {
-      console.log(data, loading, error);
+    onSuccess: (res) => {
+      console.log(res);
     },
   });
 
@@ -24,43 +30,63 @@ const Login = () => {
     run(loginParams);
   };
 
-  const handleLoginParamsChange = (key: any, e: any) => {
+  const handleLoginParamsChange = (key: any, v: any) => {
     setLoginParams({
       ...loginParams,
-      [key]: e.target.value,
+      [key]: v,
     });
+  };
+
+  const handleLinkRegister = () => {
+    navigate("/register");
+  };
+
+  const returnLoginContent = () => {
+    return (
+      <>
+        <AuthInput
+          placeholder="请输入账号"
+          value={loginParams.username}
+          onChange={(v) => {
+            handleLoginParamsChange("username", v);
+          }}
+          className="mb-4"
+        />
+        <AuthInput
+          placeholder="请输入密码"
+          value={loginParams.password}
+          type="password"
+          onChange={(v) => {
+            handleLoginParamsChange("password", v);
+          }}
+          className="mb-8"
+        />
+        <Button
+          color="primary"
+          size="large"
+          fill="solid"
+          className="mb-4 rounded-xl"
+          onClick={handleLogin}
+          loading={loading}
+        >
+          登录
+        </Button>
+        <Button
+          color="default"
+          size="large"
+          fill="solid"
+          className="rounded-xl"
+          onClick={handleLinkRegister}
+        >
+          注册
+        </Button>
+      </>
+    );
   };
 
   return (
     <>
-      <div className="pr-4">
-        <Form layout="horizontal" mode="card">
-          <Form.Header>卡片模式及分组</Form.Header>
-          <Form.Item label="手机号" className="bg-gray">
-            <Input placeholder="请输入" />
-          </Form.Item>
-          <Form.Item label="短信验证码">
-            <Input placeholder="请输入" />
-          </Form.Item>
-          <Form.Header />
-          <Form.Item label="姓名">
-            <Input placeholder="请输入" />
-          </Form.Item>
-          <Form.Item label="邮箱地址">
-            <Input placeholder="请输入" />
-          </Form.Item>
-          <Form.Item label="所在城市">
-            <Input placeholder="请输入" />
-          </Form.Item>
-          <Form.Header />
-        </Form>
-        <Form layout="horizontal" mode="card">
-          <Form.Header>带辅助操作</Form.Header>
-          <Form.Item label="短信验证码" extra={<a>发送验证码</a>}>
-            <Input placeholder="请输入" />
-          </Form.Item>
-        </Form>
-      </div>
+      <AuthLayout title={config.appName} children={returnLoginContent()} />
     </>
   );
 };
