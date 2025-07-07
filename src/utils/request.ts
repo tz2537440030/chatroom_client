@@ -46,7 +46,7 @@ request.interceptors.response.use(
       }
       return data.data;
     } else {
-      return Promise.reject(data.msg || "error");
+      return Promise.reject(data.message || "error");
     }
   },
   (error) => {
@@ -55,8 +55,12 @@ request.interceptors.response.use(
       if (status === 401) {
         localStorage.removeItem("token");
         window.location.href = "/login";
+      } else {
+        Toast.show({
+          position: "top",
+          content: error.response.data.message || statusTips[status],
+        });
       }
-      console.log(statusTips[status]);
     }
     return Promise.reject(error);
   },

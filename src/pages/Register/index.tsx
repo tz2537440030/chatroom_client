@@ -1,54 +1,84 @@
 import useRequest from "@/hooks/useRequest";
-import { register } from "@/services/global";
-import { useState } from "react";
+import { register, sendVerifyCode } from "@/services/global";
 import AuthInput from "@/components/AuthInput";
-import { Button } from "antd-mobile";
+import { Button, Form, Toast } from "antd-mobile";
 import AuthLayout from "@/pages/Layouts/AuthLayout";
 import { useNavigate } from "react-router-dom";
+import "./index.css";
+import { useEffect, useState } from "react";
+import { hashPassword } from "@/utils/utils";
 
 interface RegisterFormParams {
   username: string;
   password: string;
   nickname: string;
-}
-
-interface RegisterParams extends RegisterFormParams {
-  passwordConfirm: string;
+  code: string;
+  passwordConfirm?: string;
 }
 
 const Register = () => {
   const navigate = useNavigate();
-  const [registerParams, setRegisterParams] = useState<RegisterParams>({
-    username: "",
-    password: "",
-    nickname: "",
-    passwordConfirm: "",
+  const [form] = Form.useForm();
+  const username = Form.useWatch("username", form);
+  const code = Form.useWatch("code", form);
+  const [timer, setTimer] = useState(0);
+
+  // 注册
+  const { loading, run } = useRequest<RegisterFormParams, any>(register, {
+    manual: true,
+    onSuccess: () => {
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    },
   });
 
-  const { data, loading, error, run } = useRequest<RegisterFormParams, any>(
-    register,
+  // 发送验证码
+  const { run: runCode } = useRequest<{ username: string }, any>(
+    sendVerifyCode,
     {
       manual: true,
       onSuccess: () => {
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
+        setTimer(60);
       },
     },
   );
 
-  const handleRegister = () => {
-    run({
-      username: registerParams.username,
-      password: registerParams.password,
-      nickname: registerParams.nickname,
-    });
+  useEffect(() => {
+    if (timer > 0) {
+      setTimeout(() => {
+        setTimer(timer - 1);
+      }, 1000);
+    }
+  }, [timer]);
+
+  const handleRegister = async () => {
+    try {
+      const values = await form.validateFields();
+      if (values.password !== values.passwordConfirm) {
+        Toast.show({
+          content: "两次密码不一致",
+          position: "top",
+        });
+        return;
+      }
+      run({
+        username: values.username,
+        password: await hashPassword(values.password),
+        nickname: values.nickname,
+        code: values.code,
+      });
+    } catch (error: any) {
+      Toast.show({
+        content: error.errorFields[0].errors[0],
+        position: "top",
+      });
+    }
   };
 
-  const handleRegisterParamsChange = (key: any, v: any) => {
-    setRegisterParams({
-      ...registerParams,
-      [key]: v,
+  const handleSendCode = () => {
+    runCode({
+      username,
     });
   };
 
@@ -59,59 +89,91 @@ const Register = () => {
   const returnRegisterContent = () => {
     return (
       <>
-        <AuthInput
-          placeholder="请输入账号"
-          value={registerParams.username}
-          onChange={(v) => {
-            handleRegisterParamsChange("username", v);
-          }}
-          className="mb-4"
-        />
-        <AuthInput
-          placeholder="请输入昵称"
-          value={registerParams.nickname}
-          onChange={(v) => {
-            handleRegisterParamsChange("nickname", v);
-          }}
-          className="mb-4"
-        />
-        <AuthInput
-          placeholder="请输入密码"
-          value={registerParams.password}
-          type="password"
-          onChange={(v) => {
-            handleRegisterParamsChange("password", v);
-          }}
-          className="mb-4"
-        />
-        <AuthInput
-          placeholder="请再次输入密码"
-          value={registerParams.passwordConfirm}
-          type="password"
-          onChange={(v) => {
-            handleRegisterParamsChange("passwordConfirm", v);
-          }}
-          className="mb-8"
-        />
-        <Button
-          color="primary"
-          size="large"
-          fill="solid"
-          className="mb-4 rounded-xl"
-          onClick={handleRegister}
-          loading={loading}
+        <Form
+          form={form}
+          hasFeedback={false}
+          footer={
+            <>
+              <Button
+                color="primary"
+                size="large"
+                fill="solid"
+                className="mb-4 rounded-xl"
+                onClick={handleRegister}
+                loading={loading}
+                disabled={!code}
+              >
+                确认
+              </Button>
+              <Button
+                color="default"
+                size="large"
+                fill="solid"
+                className="rounded-xl"
+                onClick={handleLinkLogin}
+              >
+                取消
+              </Button>
+            </>
+          }
         >
-          确认
-        </Button>
-        <Button
-          color="default"
-          size="large"
-          fill="solid"
-          className="rounded-xl"
-          onClick={handleLinkLogin}
-        >
-          取消
-        </Button>
+          <Form.Item
+            name="username"
+            className="mb-4"
+            rules={[
+              { required: true, message: "请输入邮箱" },
+              { type: "email", message: "请输入正确的邮箱格式" },
+            ]}
+          >
+            <AuthInput placeholder="请输入邮箱" />
+          </Form.Item>
+          <Form.Item
+            name="nickname"
+            className="mb-4"
+            rules={[
+              { required: true, message: "请输入昵称" },
+              { type: "string", min: 1, max: 8, message: "请输入1-8位昵称" },
+            ]}
+          >
+            <AuthInput placeholder="请输入昵称" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            className="mb-4"
+            rules={[
+              { required: true, message: "请输入密码" },
+              { type: "string", min: 6, max: 16, message: "请输入6-16位密码" },
+            ]}
+          >
+            <AuthInput placeholder="请输入密码" type="password" />
+          </Form.Item>
+          <Form.Item
+            name="passwordConfirm"
+            className="mb-4"
+            rules={[
+              { required: true, message: "请输入密码" },
+              { type: "string", min: 6, max: 16, message: "请输入6-16位密码" },
+            ]}
+          >
+            <AuthInput placeholder="请再次输入密码" type="password" />
+          </Form.Item>
+          <div className="mb-8 flex justify-between gap-2">
+            <Form.Item
+              name="code"
+              className="grow"
+              rules={[{ required: true, message: "请输入验证码" }]}
+            >
+              <AuthInput placeholder="请输入邮箱验证码" />
+            </Form.Item>
+            <Button
+              onClick={handleSendCode}
+              disabled={!username || timer !== 0}
+              className="grow rounded-xl border border-gray-100 bg-card text-sm text-gray-900"
+            >
+              {timer !== 0 ? `${timer}s` : "发送验证码"}
+            </Button>
+          </div>
+        </Form>
       </>
     );
   };

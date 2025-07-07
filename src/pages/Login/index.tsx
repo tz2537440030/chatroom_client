@@ -6,6 +6,7 @@ import config from "@/config";
 import { Button } from "antd-mobile";
 import AuthLayout from "@/pages/Layouts/AuthLayout";
 import { useNavigate } from "react-router-dom";
+import { hashPassword } from "@/utils/utils";
 
 interface LoginParams {
   username: string;
@@ -19,15 +20,18 @@ const Login = () => {
     password: "",
   });
 
-  const { data, loading, error, run } = useRequest<LoginParams, any>(login, {
+  const { loading, run } = useRequest<LoginParams, any>(login, {
     manual: true,
     onSuccess: (res) => {
-      console.log(res);
+      localStorage.setItem("token", res.token);
     },
   });
 
-  const handleLogin = () => {
-    run(loginParams);
+  const handleLogin = async () => {
+    run({
+      username: loginParams.username,
+      password: await hashPassword(loginParams.password),
+    });
   };
 
   const handleLoginParamsChange = (key: any, v: any) => {
