@@ -7,6 +7,8 @@ import { Button } from "antd-mobile";
 import AuthLayout from "@/pages/Layouts/AuthLayout";
 import { useNavigate } from "react-router-dom";
 import { hashPassword } from "@/utils/utils";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/store/authSlice";
 
 interface LoginParams {
   username: string;
@@ -15,15 +17,18 @@ interface LoginParams {
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [loginParams, setLoginParams] = useState<LoginParams>({
     username: "",
     password: "",
   });
 
   const { loading, run } = useRequest<LoginParams, any>(login, {
-    manual: true,
     onSuccess: (res) => {
       localStorage.setItem("token", res.token);
+      localStorage.setItem("userid", res.user.id);
+      dispatch(setCredentials(res));
+      navigate("/layout");
     },
   });
 

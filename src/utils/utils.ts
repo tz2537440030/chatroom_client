@@ -1,3 +1,6 @@
+import pinyin from "pinyin";
+import { groupBy, sortBy } from "lodash";
+import dayjs from "dayjs";
 export const hashPassword = async (password: string) => {
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
@@ -8,4 +11,48 @@ export const hashPassword = async (password: string) => {
     .join("");
   console.log(hashedPassword);
   return hashedPassword;
+};
+
+export const isCurrentUser = (id: number) => {
+  return String(id) === localStorage.getItem("userid");
+};
+
+export const groupFriendList = (friendList: any) => {
+  const getInitial = (name: string) => {
+    const isChinese = (char: string) => {
+      const charCode = char.charCodeAt(0);
+      // 基本汉字范围：4E00-9FA5
+      return charCode >= 0x4e00 && charCode <= 0x9fa5;
+    };
+
+    if (isChinese(name)) {
+      return pinyin(name.charAt(0), {
+        style: pinyin.STYLE_FIRST_LETTER,
+      })[0][0].toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+  };
+
+  const sortedFriends = sortBy(friendList, (friend) =>
+    getInitial(friend.nickname),
+  );
+  const groupedFriends = groupBy(sortedFriends, (friend) =>
+    getInitial(friend.nickname),
+  );
+  return groupedFriends;
+};
+
+export const formatChatDatetime = (dateTime: string) => {
+  const now = dayjs();
+  const target = dayjs(dateTime);
+  // 检查是否是当年
+  if (target.year() !== now.year()) {
+    return target.format("YYYY-MM-DD HH:mm"); // 非当年：YYYY-MM-DD HH:mm
+  }
+  // 检查是否是当天
+  if (target.isSame(now, "day")) {
+    return target.format("HH:mm"); // 当天：HH:mm
+  }
+  // 默认返回 MM-DD HH:mm（当年但非当天）
+  return target.format("MM-DD HH:mm");
 };

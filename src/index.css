@@ -20,6 +20,14 @@
   @apply flex items-center justify-center;
 }
 
+.top-search input{
+    @apply bg-white h-10 rounded-xl p-5 text-center
+}
+
+.input-left input {
+  @apply text-left
+}
+
 /* 登录页背景动画和文字动画 */
 @layer utilities {
   .animate-bg-scroll {

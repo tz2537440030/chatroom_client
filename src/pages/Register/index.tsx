@@ -4,7 +4,7 @@ import AuthInput from "@/components/AuthInput";
 import { Button, Form, Toast } from "antd-mobile";
 import AuthLayout from "@/pages/Layouts/AuthLayout";
 import { useNavigate } from "react-router-dom";
-import "./index.css";
+import styles from "./index.module.css";
 import { useEffect, useState } from "react";
 import { hashPassword } from "@/utils/utils";
 
@@ -90,6 +90,7 @@ const Register = () => {
     return (
       <>
         <Form
+          className={styles.registerForm}
           form={form}
           hasFeedback={false}
           footer={
@@ -98,7 +99,7 @@ const Register = () => {
                 color="primary"
                 size="large"
                 fill="solid"
-                className="mb-4 rounded-xl"
+                className="mb-4 w-full rounded-xl"
                 onClick={handleRegister}
                 loading={loading}
                 disabled={!code}
@@ -109,7 +110,7 @@ const Register = () => {
                 color="default"
                 size="large"
                 fill="solid"
-                className="rounded-xl"
+                className="w-full rounded-xl"
                 onClick={handleLinkLogin}
               >
                 取消

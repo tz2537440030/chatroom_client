@@ -1,0 +1,4 @@
+.friend-request :global(.adm-list-body) {
+    @apply border-0
+
+}

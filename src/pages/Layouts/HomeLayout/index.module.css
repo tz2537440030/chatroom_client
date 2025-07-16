@@ -1,0 +1,15 @@
+.layout-tabbar {
+    @apply h-16 fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-between items-center p-2 z-10 w-full
+}
+
+.layout-header {
+    @apply fixed top-0 left-0 right-0 bg-gray-100 text-black p-4 text-center z-10
+}
+
+.layout-main {
+    @apply flex-1 overflow-y-auto mt-16 mb-16 pt-4
+}
+
+.layout-tabbar :global(.adm-tab-bar-wrap) {
+    @apply w-full
+}

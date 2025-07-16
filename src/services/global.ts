@@ -31,6 +31,10 @@ export const login = ({
   });
 };
 
+export const logout = () => {
+  return request.post("/auth/logout");
+};
+
 export const sendVerifyCode = ({ username }: { username: string }) => {
   return request.post("/auth/send-verify-code", {
     username,

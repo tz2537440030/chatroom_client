@@ -1,11 +1,11 @@
 import { Input, type InputProps } from "antd-mobile";
-import "./index.css";
+import styles from "./index.module.css";
 
 const AuthInput = ({ ...inputProps }: InputProps) => {
   return (
     <Input
       {...inputProps}
-      className={`auth-login-input ${inputProps.className}`}
+      className={`${styles["auth-login-input"]} ${inputProps.className}`}
     />
   );
 };

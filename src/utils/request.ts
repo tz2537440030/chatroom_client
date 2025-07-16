@@ -24,8 +24,10 @@ const request = axios.create({
 request.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+    const userid = localStorage.getItem("userid");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      config.headers["X-Custom-Header"] = userid;
     }
     return config;
   },
@@ -38,7 +40,7 @@ request.interceptors.response.use(
   (response) => {
     const { data } = response;
     if (response.status === 200 && data.code === 0) {
-      if (data.message) {
+      if (data.message && response.config.headers.isHideMessage !== "true") {
         Toast.show({
           content: data.message,
           position: "top",
