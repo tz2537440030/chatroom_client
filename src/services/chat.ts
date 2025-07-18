@@ -10,8 +10,12 @@ export const getMessage = ({
   conversationId,
   skip,
 }: {
-  conversationId: number;
+  conversationId: string;
   skip: number;
 }) => {
   return request.post("/chat/getMessage", { conversationId, skip });
+};
+
+export const getConversationList = () => {
+  return request.post("/chat/getConversationList");
 };

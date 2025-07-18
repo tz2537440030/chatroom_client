@@ -5,7 +5,8 @@ const getInitialChatState = () => {
   return {
     currentChatUser: {},
     currentChatMessage: [],
-    chatList: [],
+    conversationList: [],
+    totalUnreadMessageCount: 0,
   };
 };
 
@@ -22,15 +23,41 @@ export const chatSlice = createSlice({
       state.currentChatMessage = currentChatMessage;
     },
     pushMessage: (state: any, action) => {
-      const { message } = action.payload;
-      console.log(state.currentChatMessage);
-      state.currentChatMessage = [...state.currentChatMessage, ...message];
+      const { message, isInputInsert } = action.payload;
+      if (isInputInsert) {
+        state.currentChatMessage = [...state.currentChatMessage, ...message];
+      } else {
+        state.currentChatMessage = [...message, ...state.currentChatMessage];
+      }
+    },
+    setConversationList: (state, action) => {
+      const { conversationList, totalUnreadMessageCount } = action.payload;
+      state.totalUnreadMessageCount = totalUnreadMessageCount;
+      state.conversationList = conversationList;
+    },
+    setConversation: (state: any, action) => {
+      const { lastMessage } = action.payload;
+      state.conversationList = state.conversationList.map(
+        (conversation: any) => {
+          if (conversation.conversationId === lastMessage.conversationId) {
+            conversation.lastMessage = lastMessage;
+            conversation.conversation.messages[0] = lastMessage;
+            conversation.unReadCount = conversation.unReadCount + 1;
+          }
+          return conversation;
+        },
+      );
     },
   },
 });
 
-export const { setCurrentChatUser, setCurrentChatMessage, pushMessage } =
-  chatSlice.actions;
+export const {
+  setCurrentChatUser,
+  setCurrentChatMessage,
+  pushMessage,
+  setConversationList,
+  setConversation,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;
 
@@ -42,3 +69,11 @@ export const selectCurrentChatUser = (state: {
 export const selectCurrentChatMessage = (state: {
   chat: { currentChatMessage: any };
 }) => state.chat.currentChatMessage;
+
+export const selectConversationList = (state: {
+  chat: { conversationList: any };
+}) => state.chat.conversationList;
+
+export const selectTotalUnreadMessageCount = (state: {
+  chat: { totalUnreadMessageCount: any };
+}) => state.chat.totalUnreadMessageCount;

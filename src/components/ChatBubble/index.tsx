@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { Avatar } from "antd-mobile";
 import { formatChatDatetime } from "@/utils/utils";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, use, useEffect, useImperativeHandle, useRef } from "react";
 
 interface Message {
   id: string;
@@ -17,30 +17,49 @@ const ChatBubble = forwardRef(
     {
       messages,
       loading,
+      hasMore,
       onLoadMessage,
-    }: { messages: Message[]; loading: boolean; onLoadMessage: () => void },
+    }: {
+      messages: Message[];
+      loading: boolean;
+      hasMore: boolean;
+      onLoadMessage: () => void;
+    },
     ref,
   ) => {
     const userId = useSelector((state: any) => state.auth.user.id);
     const messageEndRef = useRef<any>(null);
     const chatContainerRef = useRef<any>(null);
+    const chatContainerScroll = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
     const isSelfMessage = (message: Message) =>
       message.senderId === Number(userId);
 
     useEffect(() => {
       const chatContainer = chatContainerRef.current;
       if (!chatContainer) return;
-
-      chatContainer.addEventListener("scroll", () => {
-        if (chatContainer.scrollTop === 0 && !loading) {
+      const handleScroll = () => {
+        if (chatContainer.scrollTop === 0 && !loading && hasMore) {
+          chatContainerScroll.current.scrollTop = chatContainer.scrollTop;
+          chatContainerScroll.current.scrollHeight = chatContainer.scrollHeight;
           onLoadMessage();
         }
-      });
-    }, []);
+      };
+
+      chatContainer.addEventListener("scroll", handleScroll);
+      return () => chatContainer.removeEventListener("scroll", handleScroll);
+    }, [hasMore, loading, onLoadMessage]);
+
+    useEffect(() => {
+      const chatContainer = chatContainerRef.current;
+      const { scrollTop, scrollHeight } = chatContainerScroll.current;
+      chatContainer.scrollTop =
+        chatContainer.scrollHeight - scrollHeight + scrollTop;
+    }, [messages]);
 
     useImperativeHandle(ref, () => ({
       scrollToBottom: () => {
-        messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
       },
     }));
 

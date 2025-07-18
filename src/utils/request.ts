@@ -39,6 +39,10 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   (response) => {
     const { data } = response;
+    const newToken = response.headers["new-token"];
+    if (newToken) {
+      localStorage.setItem("token", newToken);
+    }
     if (response.status === 200 && data.code === 0) {
       if (data.message && response.config.headers.isHideMessage !== "true") {
         Toast.show({
@@ -56,7 +60,7 @@ request.interceptors.response.use(
     if (status && statusTips[status]) {
       if (status === 401) {
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        window.location.href = "/";
       } else {
         Toast.show({
           position: "top",

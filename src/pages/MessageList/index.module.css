@@ -1,0 +1,3 @@
+.conversation-list :global(.adm-list-item-content-prefix) {
+    height: 44px;
+}

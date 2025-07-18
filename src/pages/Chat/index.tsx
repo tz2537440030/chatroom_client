@@ -1,14 +1,23 @@
 import {
   pushMessage,
   selectCurrentChatMessage,
+  setCurrentChatMessage,
   setCurrentChatUser,
 } from "@/store/chatSlice";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SearchOrSendInput from "@/components/SearchOrSendInput";
 import ChatBubble from "@/components/ChatBubble";
 import useRequest from "@/hooks/useRequest";
 import { getMessage } from "@/services/chat";
+import { store } from "@/store";
+import config from "@/config";
+import {
+  onMessage,
+  removeMessageListener,
+  sendMessage,
+} from "@/services/websocket";
+import { MESSAGE_DELIVERED, NEW_MESSAGE } from "@/const";
 
 const Chat = () => {
   const queryParams = new URLSearchParams(window.location.search);
@@ -18,77 +27,75 @@ const Chat = () => {
     (state: any) => state.chat.currentChatUser,
   );
   const currentChatMessage = useSelector(selectCurrentChatMessage);
-  const ws = useRef<WebSocket | null>(null);
   const inputRef = useRef<any>(null);
   const chatBubbleRef = useRef<any>(null);
 
+  const [hasMore, setHasMore] = useState(true);
+  const [isInputInsert, setIsInputInsert] = useState(false);
+  const isInitialMount = useRef(true);
+
   const { loading, run: runGetMessage } = useRequest<any, any>(getMessage, {
     onSuccess: (res: any) => {
-      console.log("success", res);
+      if (res.messages.length < config.chatPageSize) {
+        setHasMore(false);
+      }
       dispatch(
         pushMessage({
-          message: [...res],
+          message: res.messages,
         }),
       );
     },
   });
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    ws.current = new WebSocket(
-      `ws://localhost:3000?conversationId=${conversationId}&token=${token}`,
-    );
-    ws.current.onopen = () => {
-      console.log("连接成功");
+    const pushMessageToRedux = (data: any) => {
+      setIsInputInsert(true);
+      dispatch(
+        pushMessage({
+          message: [data.message],
+          isInputInsert: true,
+        }),
+      );
     };
 
-    ws.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "new_message") {
-        dispatch(
-          pushMessage({
-            message: [data.message],
-          }),
-        );
-      } else if (data.type === "message_delivered") {
-        dispatch(
-          pushMessage({
-            message: [data.message],
-          }),
-        );
-      }
-    };
+    onMessage(NEW_MESSAGE, (data: any) => {
+      pushMessageToRedux(data);
+    });
 
-    ws.current.onerror = (error) => {
-      console.error("WebSocket连接错误:", error);
-    };
-
-    ws.current.onclose = () => {
-      console.log("WebSocket连接已关闭");
-    };
+    onMessage(MESSAGE_DELIVERED, (data: any) => {
+      pushMessageToRedux(data);
+    });
 
     return () => {
-      ws.current?.close();
+      removeMessageListener(NEW_MESSAGE);
+      dispatch(setCurrentChatMessage({ currentChatMessage: [] }));
       dispatch(setCurrentChatUser({ currentChatUser: {} }));
     };
   }, []);
 
+  useEffect(() => {
+    if (isInputInsert || isInitialMount.current) {
+      chatBubbleRef.current.scrollToBottom();
+      isInitialMount.current = false;
+    }
+  }, [currentChatMessage, isInputInsert]);
+
   const handleLoadMessage = () => {
-    runGetMessage({ conversationId, skip: currentChatMessage.length });
+    const latestState = store.getState();
+    const currentLength = selectCurrentChatMessage(latestState).length;
+    setIsInputInsert(false);
+    runGetMessage({ conversationId, skip: currentLength });
   };
 
   const handleSendMsg = (text: string) => {
-    if (!text || !ws.current) return;
+    if (!text) return;
     try {
-      ws.current.send(
-        JSON.stringify({
-          type: "private_message",
-          content: text,
-          conversationId,
-          receiverId: currentChatUser.id,
-        }),
-      );
-      chatBubbleRef.current.scrollToBottom();
+      sendMessage({
+        type: "private_message",
+        content: text,
+        conversationId,
+        receiverId: currentChatUser.id,
+      });
       inputRef.current.clearText();
     } catch (error) {
       console.error(error);
@@ -99,6 +106,7 @@ const Chat = () => {
     <div className="chatContainer">
       <ChatBubble
         messages={currentChatMessage}
+        hasMore={hasMore}
         ref={chatBubbleRef}
         onLoadMessage={handleLoadMessage}
         loading={loading}

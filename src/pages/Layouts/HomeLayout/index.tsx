@@ -10,22 +10,30 @@ import { useEffect, useState } from "react";
 import useRequest from "@/hooks/useRequest";
 import { getFriendList } from "@/services/contact";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentChatUser } from "@/store/chatSlice";
+import {
+  selectCurrentChatUser,
+  selectTotalUnreadMessageCount,
+  setConversation,
+} from "@/store/chatSlice";
 import { setFriendList } from "@/store/userSlice";
+import { initWebSocket, onMessage } from "@/services/websocket";
+import { UPDATE_CONVERSATION_LIST } from "@/const";
 
 const HomeLayout = (props: { isBlank?: boolean }) => {
   const { isBlank } = props;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentChatUser = useSelector(selectCurrentChatUser);
+  const totalUnreadMessageCount = useSelector(selectTotalUnreadMessageCount);
   const [title, setTitle] = useState("消息");
   const { pathname } = location;
+
   const tabs = [
     {
       key: "/layout",
       title: "消息",
       icon: <MessageOutline />,
-      badge: "99+",
+      badge: totalUnreadMessageCount ? totalUnreadMessageCount : null,
     },
     {
       key: "/layout/contact",
@@ -55,7 +63,12 @@ const HomeLayout = (props: { isBlank?: boolean }) => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token") || "";
+    initWebSocket(token);
     runGetRequestList();
+    onMessage(UPDATE_CONVERSATION_LIST, (data: any) => {
+      dispatch(setConversation({ lastMessage: data.message }));
+    });
   }, []);
 
   return (
