@@ -53,3 +53,11 @@ export const verifyCode = ({
     code,
   });
 };
+
+export const changeUserInfo = (userInfo: any) => {
+  return request.post("/auth/changeUserInfo", userInfo);
+};
+
+export const uploadFile = (file: any) => {
+  return request.post("/upload/upload", file);
+};

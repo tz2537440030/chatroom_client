@@ -7,6 +7,7 @@ const getInitialChatState = () => {
     currentChatMessage: [],
     conversationList: [],
     totalUnreadMessageCount: 0,
+    conversationId: "",
   };
 };
 
@@ -17,6 +18,10 @@ export const chatSlice = createSlice({
     setCurrentChatUser: (state, action) => {
       const { currentChatUser } = action.payload;
       state.currentChatUser = currentChatUser;
+    },
+    setCurrentChatConversationId: (state, action) => {
+      const { conversationId } = action.payload;
+      state.conversationId = conversationId;
     },
     setCurrentChatMessage: (state, action) => {
       const { currentChatMessage } = action.payload;
@@ -43,9 +48,28 @@ export const chatSlice = createSlice({
             conversation.lastMessage = lastMessage;
             conversation.conversation.messages[0] = lastMessage;
             conversation.unReadCount = conversation.unReadCount + 1;
+            state.totalUnreadMessageCount = state.totalUnreadMessageCount + 1;
           }
           return conversation;
         },
+      );
+    },
+    clearCurrentConversationUnreadCount: (state: any) => {
+      const conversationId = state.conversationId;
+      if (!conversationId) return;
+      state.conversationList = state.conversationList.map(
+        (conversation: any) => {
+          if (conversation.conversationId == conversationId) {
+            conversation.unReadCount = 0;
+          }
+          return conversation;
+        },
+      );
+      state.totalUnreadMessageCount = state.conversationList.reduce(
+        (total: number, conversation: any) => {
+          return total + conversation.unReadCount;
+        },
+        0,
       );
     },
   },
@@ -57,6 +81,8 @@ export const {
   pushMessage,
   setConversationList,
   setConversation,
+  setCurrentChatConversationId,
+  clearCurrentConversationUnreadCount,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
@@ -77,3 +103,9 @@ export const selectConversationList = (state: {
 export const selectTotalUnreadMessageCount = (state: {
   chat: { totalUnreadMessageCount: any };
 }) => state.chat.totalUnreadMessageCount;
+
+export const selectCurrentChatConversationId = (state: {
+  chat: { conversationId: any };
+}) => {
+  return state.chat.conversationId;
+};

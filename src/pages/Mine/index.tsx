@@ -1,5 +1,5 @@
 import { selectCurrentUser } from "@/store/authSlice";
-import { Avatar, List } from "antd-mobile";
+import { Avatar, List, Image } from "antd-mobile";
 import { useSelector } from "react-redux";
 import { PictureOutline, UploadOutline } from "antd-mobile-icons";
 import { persistor } from "@/store";
@@ -32,8 +32,9 @@ const Mine = () => {
       <List header="个人信息" className="mb-4">
         <List.Item
           key={currentUser.username}
-          prefix={<Avatar src="" />}
+          prefix={<Avatar src={currentUser.avatar} />}
           description={currentUser.username}
+          onClick={() => navigate("/layout-blank/user-info")}
         >
           {currentUser.nickname}
         </List.Item>

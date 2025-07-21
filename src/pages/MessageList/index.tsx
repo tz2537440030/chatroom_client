@@ -30,12 +30,12 @@ const MessageList = () => {
 
   return (
     <>
-      <SearchOrSendInput
+      {/* <SearchOrSendInput
         placeholder="请搜索昵称或邮箱"
         onSearch={(v) => {
           console.log(v);
         }}
-      />
+      /> */}
       <List className={`${styles["conversation-list"]} mt-4`}>
         {conversationList?.map((conversation: any) => (
           <List.Item
@@ -49,7 +49,9 @@ const MessageList = () => {
                 <Avatar src={conversation.user.avatar || ""} />
               </Badge>
             }
-            description={conversation.lastMessage?.content}
+            description={
+              conversation.lastMessage?.content || "系统：来找我聊天吧"
+            }
             onClick={() => handleChat(conversation.user)}
           >
             <div className="flex justify-between">

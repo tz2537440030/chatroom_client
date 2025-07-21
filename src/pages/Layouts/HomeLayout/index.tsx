@@ -4,13 +4,15 @@ import {
   UserOutline,
   UserContactOutline,
 } from "antd-mobile-icons";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styles from "./index.module.css";
 import { useEffect, useState } from "react";
 import useRequest from "@/hooks/useRequest";
 import { getFriendList } from "@/services/contact";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  clearCurrentConversationUnreadCount,
+  selectCurrentChatConversationId,
   selectCurrentChatUser,
   selectTotalUnreadMessageCount,
   setConversation,
@@ -18,12 +20,15 @@ import {
 import { setFriendList } from "@/store/userSlice";
 import { initWebSocket, onMessage } from "@/services/websocket";
 import { UPDATE_CONVERSATION_LIST } from "@/const";
+import { changeMessageStatus } from "@/services/chat";
 
 const HomeLayout = (props: { isBlank?: boolean }) => {
   const { isBlank } = props;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const currentChatUser = useSelector(selectCurrentChatUser);
+  const currentConversationId = useSelector(selectCurrentChatConversationId);
   const totalUnreadMessageCount = useSelector(selectTotalUnreadMessageCount);
   const [title, setTitle] = useState("消息");
   const { pathname } = location;
@@ -53,12 +58,22 @@ const HomeLayout = (props: { isBlank?: boolean }) => {
     },
   });
 
+  const { run: runChangeMessageStatus } = useRequest(changeMessageStatus, {
+    onSuccess: () => {
+      dispatch(clearCurrentConversationUnreadCount());
+    },
+  });
+
   const setRouteActive = (value: string) => {
     setTitle(tabs.find((item) => item.key === value)?.title || "");
     navigate(value);
   };
 
   const handleBack = () => {
+    const pathname = location.pathname;
+    if (pathname === "/layout-blank/chat") {
+      runChangeMessageStatus({ conversationId: currentConversationId });
+    }
     isBlank ? navigate(-1) : null;
   };
 

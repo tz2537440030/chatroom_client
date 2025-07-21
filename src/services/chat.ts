@@ -19,3 +19,13 @@ export const getMessage = ({
 export const getConversationList = () => {
   return request.post("/chat/getConversationList");
 };
+
+export const changeMessageStatus = ({
+  conversationId,
+}: {
+  conversationId: string;
+}) => {
+  return request.post("/chat/changeMessageStatus", {
+    conversationId,
+  });
+};

@@ -1,6 +1,7 @@
 import {
   pushMessage,
   selectCurrentChatMessage,
+  setCurrentChatConversationId,
   setCurrentChatMessage,
   setCurrentChatUser,
 } from "@/store/chatSlice";
@@ -48,6 +49,7 @@ const Chat = () => {
   });
 
   useEffect(() => {
+    dispatch(setCurrentChatConversationId({ conversationId }));
     const pushMessageToRedux = (data: any) => {
       setIsInputInsert(true);
       dispatch(

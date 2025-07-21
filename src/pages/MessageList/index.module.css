@@ -1,3 +1,13 @@
 .conversation-list :global(.adm-list-item-content-prefix) {
     height: 44px;
 }
+
+.conversation-list :global(.adm-list-item-content-main) {
+    overflow: hidden;
+}
+
+.conversation-list :global(.adm-list-item-description) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

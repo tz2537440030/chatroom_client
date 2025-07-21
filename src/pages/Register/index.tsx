@@ -25,7 +25,6 @@ const Register = () => {
 
   // 注册
   const { loading, run } = useRequest<RegisterFormParams, any>(register, {
-    manual: true,
     onSuccess: () => {
       setTimeout(() => {
         navigate("/");
@@ -37,7 +36,6 @@ const Register = () => {
   const { run: runCode } = useRequest<{ username: string }, any>(
     sendVerifyCode,
     {
-      manual: true,
       onSuccess: () => {
         setTimer(60);
       },

@@ -7,6 +7,7 @@ import Contact from "@/pages/Contact";
 import Mine from "@/pages/Mine";
 import NewFriend from "@/pages/NewFriend";
 import Chat from "@/pages/Chat";
+import UserInfo from "@/pages/UserInfo";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "chat",
         element: <Chat />,
+      },
+      {
+        path: "user-info",
+        element: <UserInfo />,
       },
     ],
   },

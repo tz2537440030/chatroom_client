@@ -2,6 +2,8 @@ import { useSelector } from "react-redux";
 import { Avatar } from "antd-mobile";
 import { formatChatDatetime } from "@/utils/utils";
 import { forwardRef, use, useEffect, useImperativeHandle, useRef } from "react";
+import { selectCurrentChatUser } from "@/store/chatSlice";
+import { selectCurrentUser } from "@/store/authSlice";
 
 interface Message {
   id: string;
@@ -28,6 +30,8 @@ const ChatBubble = forwardRef(
     ref,
   ) => {
     const userId = useSelector((state: any) => state.auth.user.id);
+    const currentChatUser = useSelector(selectCurrentChatUser);
+    const currentUser = useSelector(selectCurrentUser);
     const messageEndRef = useRef<any>(null);
     const chatContainerRef = useRef<any>(null);
     const chatContainerScroll = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
@@ -75,7 +79,9 @@ const ChatBubble = forwardRef(
             key={message.id}
             className={`flex ${isSelfMessage(message) ? "justify-end" : "justify-start"} mb-4`}
           >
-            {!isSelfMessage(message) && <Avatar src="" className="mr-2" />}
+            {!isSelfMessage(message) && (
+              <Avatar src={currentChatUser.avatar || ""} className="mr-2" />
+            )}
             {isSelfMessage(message) && (
               <div className="mr-2 flex items-end text-xs text-gray-400">
                 {formatChatDatetime(message.createdAt)}
@@ -95,7 +101,9 @@ const ChatBubble = forwardRef(
                 {formatChatDatetime(message.createdAt)}
               </div>
             )}
-            {isSelfMessage(message) && <Avatar src="" className="ml-2" />}
+            {isSelfMessage(message) && (
+              <Avatar src={currentUser.avatar || ""} className="ml-2" />
+            )}
           </div>
         ))}
         <div ref={messageEndRef}></div>

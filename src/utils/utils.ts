@@ -9,7 +9,6 @@ export const hashPassword = async (password: string) => {
   const hashedPassword = hashArray
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
-  console.log(hashedPassword);
   return hashedPassword;
 };
 

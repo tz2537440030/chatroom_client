@@ -23,11 +23,6 @@ const Contact = () => {
           新的朋友
         </List.Item>
       </List>
-      <List header="群聊">
-        <List.Item>群聊1</List.Item>
-        <List.Item>群聊2</List.Item>
-        <List.Item>群聊3</List.Item>
-      </List>
       <IndexBar>
         {Object.entries(groupedFriends).map(([initial, groupFriends]) => (
           <IndexBar.Panel index={initial} title={initial} key={initial}>

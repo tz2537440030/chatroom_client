@@ -16,7 +16,9 @@ export const authSlice = createSlice({
     setCredentials: (state, action) => {
       const { user, token } = action.payload;
       state.user = user;
-      state.token = token;
+      if (token) {
+        state.token = token;
+      }
     },
     logout: (state) => {
       state.user = null;
