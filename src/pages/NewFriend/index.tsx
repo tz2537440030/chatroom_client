@@ -1,21 +1,30 @@
 import useRequest from "@/hooks/useRequest";
 import {
   addNewFriend,
+  changeFriendRequestRead,
   changeFriendRequestStatus,
   getFriendList,
   getFriendRequestList,
   getUserByUsernameOrNickname,
 } from "@/services/contact";
-import { ErrorBlock, List } from "antd-mobile";
-import { useEffect } from "react";
+import { Badge, ErrorBlock, List } from "antd-mobile";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./index.module.css";
-import { setFriendList } from "@/store/userSlice";
+import {
+  selectFriendRequestList,
+  setFriendList,
+  setFriendRequestList,
+  setFriendRequestRead,
+} from "@/store/userSlice";
 import SearchOrSendInput from "@/components/SearchOrSendInput";
+import { sendMessage } from "@/services/websocket";
 
 const NewFriend = () => {
   const dispatch = useDispatch();
   const auth = useSelector((state: any) => state.auth);
+  const requestList = useSelector(selectFriendRequestList);
+  const currentClickRequest = useRef<any>(null);
   const requestStatus: any = {
     pending: "等待同意",
     accepted: "已同意",
@@ -28,28 +37,51 @@ const NewFriend = () => {
     {},
   );
 
+  const { run: runChangeFriendRequestRead } = useRequest<any, any>(
+    changeFriendRequestRead,
+    {
+      onSuccess: (res, params) => {
+        dispatch(setFriendRequestRead({ id: params.id }));
+      },
+    },
+  );
+
   // 添加好友
   const { run: runAddNewFriend } = useRequest<
     { senderId: string; receiverId: string },
     any
   >(addNewFriend, {
-    onSuccess: () => {
+    onSuccess: (res, params: any) => {
+      sendMessage({
+        type: "friend_request",
+        senderId: auth.user.id,
+        receiverId: params.receiverId,
+      });
       runGetRequestList({ senderId: auth.user.id }, { isHideMessage: true });
     },
   });
 
   // 获取好友请求列表
-  const { data: requestList = [], run: runGetRequestList } = useRequest<
-    { senderId: string },
-    any
-  >(getFriendRequestList);
+  const { run: runGetRequestList } = useRequest<{ senderId: string }, any>(
+    getFriendRequestList,
+    {
+      onSuccess: (res) => {
+        dispatch(setFriendRequestList({ friendRequestList: res }));
+      },
+    },
+  );
 
   const { run: runChangeFriendRequestStatus } = useRequest<
     { id: string; status: string },
     any
   >(changeFriendRequestStatus, {
-    onSuccess: () => {
+    onSuccess: (res, params: any) => {
       runGetRequestList({ senderId: auth.user.id }, { isHideMessage: true });
+      sendMessage({
+        type: "friend_request",
+        senderId: currentClickRequest.current,
+        receiverId: auth.user.id,
+      });
       getFriendList().then((res) => {
         dispatch(setFriendList({ friendList: res }));
       });
@@ -91,6 +123,11 @@ const NewFriend = () => {
       id: item.id,
       status: option,
     });
+  };
+
+  const handleReadFriendRequest = async (id: number, receiverId: number) => {
+    currentClickRequest.current = receiverId;
+    runChangeFriendRequestRead({ id, isRead: true });
   };
 
   return (
@@ -142,8 +179,13 @@ const NewFriend = () => {
                 key={item.id}
                 extra={returnRequestStatus(item)}
                 description={item.requestInfo.username}
+                onClick={() =>
+                  handleReadFriendRequest(item.id, item.receiverId)
+                }
               >
-                {item.requestInfo.nickname}
+                <Badge content={!item.isRead ? Badge.dot : null}>
+                  {item.requestInfo.nickname}
+                </Badge>
               </List.Item>
             );
           })

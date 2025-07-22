@@ -56,3 +56,22 @@ export const changeFriendRequestStatus = ({
 export const getFriendList = () => {
   return request.post("/contact/getFriendList");
 };
+
+export const deleteFriend = ({ friendId }: { friendId: string }) => {
+  return request.post("/contact/deleteFriend", {
+    friendId,
+  });
+};
+
+export const changeFriendRequestRead = ({
+  id,
+  isRead,
+}: {
+  id: number;
+  isRead: boolean;
+}) => {
+  return request.post("/contact/changeFriendRequestRead", {
+    id,
+    isRead,
+  });
+};

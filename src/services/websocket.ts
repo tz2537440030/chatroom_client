@@ -1,5 +1,5 @@
 let ws: any;
-const handlers: any = {};
+let handlers: any = {};
 
 export const initWebSocket = (token: string) => {
   ws = new WebSocket(`ws://localhost:3000/ws?token=${token}`);
@@ -37,6 +37,7 @@ export const sendMessage = ({
   type: string;
   [key: string]: any;
 }) => {
+  console.log(type, rest, ws);
   if (ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({ type, ...rest }));
   }
@@ -52,6 +53,7 @@ export const removeMessageListener = (type: string) => {
 
 export const closeWebsocket = () => {
   if (ws) {
+    handlers = {};
     ws.close();
   }
 };

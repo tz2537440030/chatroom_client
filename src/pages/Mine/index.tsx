@@ -1,9 +1,10 @@
 import { selectCurrentUser } from "@/store/authSlice";
-import { Avatar, List, Image } from "antd-mobile";
+import { Avatar, List } from "antd-mobile";
 import { useSelector } from "react-redux";
 import { PictureOutline, UploadOutline } from "antd-mobile-icons";
 import { persistor } from "@/store";
 import { useNavigate } from "react-router-dom";
+import { closeWebsocket } from "@/services/websocket";
 
 const Mine = () => {
   const currentUser = useSelector(selectCurrentUser);
@@ -22,6 +23,7 @@ const Mine = () => {
         persistor.purge();
         localStorage.removeItem("token");
         localStorage.removeItem("userid");
+        closeWebsocket();
         navigate("/");
       },
     },
