@@ -50,6 +50,10 @@ const Login = () => {
     navigate("/register");
   };
 
+  const handleLinkResetPassword = () => {
+    navigate("/reset-password");
+  };
+
   const returnLoginContent = () => {
     return (
       <>
@@ -84,10 +88,19 @@ const Login = () => {
           color="default"
           size="large"
           fill="solid"
-          className="rounded-xl"
+          className="mb-4 rounded-xl"
           onClick={handleLinkRegister}
         >
           注册
+        </Button>
+        <Button
+          color="default"
+          size="large"
+          fill="solid"
+          className="rounded-xl"
+          onClick={handleLinkResetPassword}
+        >
+          忘记密码
         </Button>
       </>
     );

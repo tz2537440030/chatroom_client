@@ -8,6 +8,8 @@ import Mine from "@/pages/Mine";
 import NewFriend from "@/pages/NewFriend";
 import Chat from "@/pages/Chat";
 import UserInfo from "@/pages/UserInfo";
+import ResetPassword from "@/pages/ResetPassword";
+import ResetPasswordFromLogin from "@/pages/ResetPassword/ResetPasswordFromLogin";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPasswordFromLogin />,
   },
   {
     path: "/layout",
@@ -51,6 +57,10 @@ const router = createBrowserRouter([
       {
         path: "user-info",
         element: <UserInfo />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
       },
     ],
   },

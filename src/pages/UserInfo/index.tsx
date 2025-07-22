@@ -5,10 +5,13 @@ import { AddOutline } from "antd-mobile-icons";
 import { Form, Input, List, Popup, type ImageUploadItem } from "antd-mobile";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import styles from "./index.module.css";
 
 const UserInfo = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUser = useSelector(selectCurrentUser);
   const [visible, setVisible] = useState(false);
   const [fileList, setFileList] = useState<ImageUploadItem[]>([]);
@@ -37,7 +40,7 @@ const UserInfo = () => {
         setCurrentPopup("nickname");
         setVisible(true);
         popupNodeRef.current = (
-          <Form layout="horizontal" form={form}>
+          <Form layout="horizontal" form={form} className="border-0 px-0 py-5">
             <Form.Item
               label="昵称"
               name="nickname"
@@ -98,6 +101,14 @@ const UserInfo = () => {
         uploadRef.current?.click();
       },
     },
+    {
+      id: "password",
+      label: "密码",
+      value: "修改密码",
+      onClick: () => {
+        navigate("/layout-blank/reset-password");
+      },
+    },
   ];
 
   useEffect(() => {
@@ -123,6 +134,12 @@ const UserInfo = () => {
       </List>
       <Popup
         visible={visible}
+        bodyStyle={{
+          borderTopLeftRadius: "8px",
+          borderTopRightRadius: "8px",
+          minHeight: "40vh",
+        }}
+        className={styles["popup-container"]}
         onMaskClick={() => {
           const currentPopupObj: any = userConfigList.find(
             (item) => item.id === currentPopup,
@@ -131,7 +148,6 @@ const UserInfo = () => {
             currentPopupObj.formSubmit();
           }
         }}
-        bodyStyle={{ height: "40vh" }}
       >
         {popupNodeRef.current}
       </Popup>

@@ -1,0 +1,8 @@
+.popup-container :global(.adm-form ) {
+    --border-top: 0;
+    --border-bottom: 0;
+}
+
+.popup-container :global(.adm-list-item-content) {
+    border: 0;
+}

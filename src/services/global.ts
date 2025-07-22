@@ -58,6 +58,22 @@ export const changeUserInfo = (userInfo: any) => {
   return request.post("/auth/changeUserInfo", userInfo);
 };
 
+export const changePassword = ({
+  username,
+  password,
+  code,
+}: {
+  username: string;
+  password: string;
+  code: string;
+}) => {
+  return request.post("/auth/changePassword", {
+    username,
+    password,
+    code,
+  });
+};
+
 export const uploadFile = (file: any) => {
   return request.post("/upload/upload", file);
 };

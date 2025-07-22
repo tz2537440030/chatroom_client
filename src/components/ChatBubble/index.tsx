@@ -83,12 +83,12 @@ const ChatBubble = forwardRef(
               <Avatar src={currentChatUser.avatar || ""} className="mr-2" />
             )}
             {isSelfMessage(message) && (
-              <div className="mr-2 flex items-end text-xs text-gray-400">
+              <div className="mr-2 flex max-w-[65px] items-end text-xs text-gray-400">
                 {formatChatDatetime(message.createdAt)}
               </div>
             )}
             <div
-              className={`max-w-xs whitespace-pre-line break-all rounded-lg px-4 py-2 lg:max-w-md ${
+              className={`max-w-[calc(100vw-145px)] max-w-xs whitespace-pre-line break-all rounded-lg px-4 py-2 lg:max-w-md ${
                 isSelfMessage(message)
                   ? "rounded-tr-none bg-blue-500 text-white"
                   : "rounded-tl-none bg-gray-200 text-gray-800"
@@ -97,7 +97,7 @@ const ChatBubble = forwardRef(
               <div className="text-sm">{message.content}</div>
             </div>
             {!isSelfMessage(message) && (
-              <div className="ml-2 flex items-end text-xs text-gray-400">
+              <div className="ml-2 flex max-w-[65px] items-end text-xs text-gray-400">
                 {formatChatDatetime(message.createdAt)}
               </div>
             )}
