@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "antd-mobile": "^5.39.0",
     "axios": "^1.10.0",
+    "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
     "lorem-ipsum": "^2.0.8",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@types/crypto-js": "^4.2.2",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.0.10",
     "@types/react": "^19.1.8",

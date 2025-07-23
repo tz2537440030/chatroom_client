@@ -1,15 +1,20 @@
 import pinyin from "pinyin";
 import { groupBy, sortBy } from "lodash";
 import dayjs from "dayjs";
+import { SHA256 } from "crypto-js";
 export const hashPassword = async (password: string) => {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashedPassword = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-  return hashedPassword;
+  if (window.crypto?.subtle) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashedPassword = hashArray
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    return hashedPassword;
+  } else {
+    return SHA256(password).toString();
+  }
 };
 
 export const isCurrentUser = (id: number) => {
