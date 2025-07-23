@@ -113,7 +113,7 @@ const Chat = () => {
         onLoadMessage={handleLoadMessage}
         loading={loading}
       />
-      <div className="my-5">
+      <div className="py-5">
         <SearchOrSendInput
           ref={inputRef}
           placeholder="请输入"
