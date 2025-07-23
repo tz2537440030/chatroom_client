@@ -113,7 +113,12 @@ const Chat = () => {
         onLoadMessage={handleLoadMessage}
         loading={loading}
       />
-      <div className="py-5">
+      <div
+        className="py-5"
+        style={{
+          paddingBottom: "env(safe-area-inset-bottom)",
+        }}
+      >
         <SearchOrSendInput
           ref={inputRef}
           placeholder="请输入"
