@@ -2,7 +2,7 @@ let ws: any;
 let handlers: any = {};
 
 export const initWebSocket = (token: string) => {
-  ws = new WebSocket(`ws://localhost:3000/ws?token=${token}`);
+  ws = new WebSocket(`ws://111.170.33.15:37347/ws?token=${token}`);
   ws.onopen = () => {
     console.log("WebSocket连接已打开");
   };
@@ -37,7 +37,6 @@ export const sendMessage = ({
   type: string;
   [key: string]: any;
 }) => {
-  console.log(type, rest, ws);
   if (ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({ type, ...rest }));
   }
