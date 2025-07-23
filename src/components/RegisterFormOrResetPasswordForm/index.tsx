@@ -4,7 +4,7 @@ import AuthInput from "../AuthInput";
 import { useNavigate } from "react-router-dom";
 import useRequest from "@/hooks/useRequest";
 import { sendVerifyCode } from "@/services/global";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const RegisterFormOrResetPasswordForm = ({
   form,
   onSubmit,
@@ -53,6 +53,16 @@ const RegisterFormOrResetPasswordForm = ({
       });
     }
   };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
 
   return (
     <Form
