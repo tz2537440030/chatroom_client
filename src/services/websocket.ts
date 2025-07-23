@@ -9,6 +9,12 @@ export const initWebSocket = (token: string) => {
     console.log("WebSocket连接已打开");
   };
 
+  const heartbeat = () => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: "ping" }));
+    }
+  };
+
   ws.onmessage = (event: any) => {
     try {
       const data = JSON.parse(event.data);
@@ -30,6 +36,7 @@ export const initWebSocket = (token: string) => {
     console.log("WebSocket连接已关闭");
     ws = null;
   };
+  setInterval(heartbeat, 30000);
 };
 
 export const sendMessage = ({

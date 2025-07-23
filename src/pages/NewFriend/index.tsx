@@ -24,7 +24,7 @@ const NewFriend = () => {
   const dispatch = useDispatch();
   const auth = useSelector((state: any) => state.auth);
   const requestList = useSelector(selectFriendRequestList);
-  const currentClickRequest = useRef<any>(null);
+  const currentOptRequest = useRef<any>(null);
   const requestStatus: any = {
     pending: "等待同意",
     accepted: "已同意",
@@ -57,7 +57,7 @@ const NewFriend = () => {
         senderId: auth.user.id,
         receiverId: params.receiverId,
       });
-      runGetRequestList({ senderId: auth.user.id }, { isHideMessage: true });
+      runGetRequestList({ senderId: auth.user.id });
     },
   });
 
@@ -76,11 +76,11 @@ const NewFriend = () => {
     any
   >(changeFriendRequestStatus, {
     onSuccess: (res, params: any) => {
-      runGetRequestList({ senderId: auth.user.id }, { isHideMessage: true });
+      runGetRequestList({ senderId: auth.user.id });
       sendMessage({
         type: "friend_request",
-        senderId: currentClickRequest.current,
-        receiverId: auth.user.id,
+        senderId: auth.user.id,
+        receiverId: currentOptRequest.current.senderId,
       });
       getFriendList().then((res) => {
         dispatch(setFriendList({ friendList: res }));
@@ -89,7 +89,7 @@ const NewFriend = () => {
   });
 
   useEffect(() => {
-    runGetRequestList({ senderId: auth.user.id }, { isHideMessage: true });
+    runGetRequestList({ senderId: auth.user.id });
   }, []);
 
   const returnRequestStatus = (item: any) => {
@@ -119,6 +119,7 @@ const NewFriend = () => {
     item: any,
     option: "accepted" | "rejected",
   ) => {
+    currentOptRequest.current = item;
     runChangeFriendRequestStatus({
       id: item.id,
       status: option,
@@ -126,7 +127,6 @@ const NewFriend = () => {
   };
 
   const handleReadFriendRequest = async (id: number, receiverId: number) => {
-    currentClickRequest.current = receiverId;
     runChangeFriendRequestRead({ id, isRead: true });
   };
 
@@ -144,7 +144,7 @@ const NewFriend = () => {
             return (
               <List.Item
                 key={item.id}
-                description={item.username}
+                description={item?.username}
                 extra={
                   <a
                     onClick={() => {
@@ -159,7 +159,7 @@ const NewFriend = () => {
                   </a>
                 }
               >
-                {item.nickname}
+                {item?.nickname}
               </List.Item>
             );
           })}
@@ -178,13 +178,15 @@ const NewFriend = () => {
               <List.Item
                 key={item.id}
                 extra={returnRequestStatus(item)}
-                description={item.requestInfo.username}
+                description={item.requestInfo?.username}
                 onClick={() =>
                   handleReadFriendRequest(item.id, item.receiverId)
                 }
               >
-                <Badge content={!item.isRead ? Badge.dot : null}>
-                  {item.requestInfo.nickname}
+                <Badge
+                  content={!item.isRead && !item.isSender ? Badge.dot : null}
+                >
+                  {item.requestInfo?.nickname}
                 </Badge>
               </List.Item>
             );

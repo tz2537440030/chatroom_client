@@ -51,7 +51,9 @@ const HomeLayout = (props: { isBlank?: boolean }) => {
       key: "/layout/contact",
       title: "联系人",
       icon: <UserContactOutline />,
-      badge: friendRequestList?.some((item: any) => !item.isRead)
+      badge: friendRequestList
+        ?.filter((item: any) => !item.isSender)
+        .some((item: any) => !item.isRead)
         ? Badge.dot
         : null,
     },
@@ -100,13 +102,14 @@ const HomeLayout = (props: { isBlank?: boolean }) => {
     const token = localStorage.getItem("token") || "";
     initWebSocket(token);
     runGetFriendList();
-    runGetRequestList({ senderId: user.id }, { isHideMessage: true });
+    runGetRequestList({ senderId: user.id });
 
     onMessage(UPDATE_CONVERSATION_LIST, (data: any) => {
       dispatch(setConversation({ lastMessage: data.message }));
     });
     onMessage(NEW_FRIEND_REQUEST, (data: any) => {
-      runGetRequestList({ senderId: data.senderId }, { isHideMessage: true });
+      runGetFriendList();
+      runGetRequestList({ senderId: data.senderId });
     });
   }, []);
 

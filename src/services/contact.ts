@@ -19,24 +19,13 @@ export const addNewFriend = ({
   });
 };
 
-export const getFriendRequestList = (
-  {
-    senderId,
-  }: {
-    senderId: string;
-  },
-  { isHideMessage }: { isHideMessage?: boolean },
-) => {
+export const getFriendRequestList = ({ senderId }: { senderId: string }) => {
   return request.post(
     "/contact/getFriendRequestList",
     {
       senderId,
     },
-    {
-      headers: {
-        isHideMessage,
-      },
-    },
+    {},
   );
 };
 

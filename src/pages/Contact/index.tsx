@@ -62,7 +62,9 @@ const Contact = () => {
         <List.Item prefix={<UserAddOutline />} onClick={handleNewFriend}>
           <Badge
             content={
-              friendRequestList?.some((item: any) => !item.isRead)
+              friendRequestList
+                ?.filter((item: any) => !item.isSender)
+                .some((item: any) => !item.isRead)
                 ? Badge.dot
                 : null
             }

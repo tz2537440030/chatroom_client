@@ -88,7 +88,7 @@ const ChatBubble = forwardRef(
               </div>
             )}
             <div
-              className={`max-w-[calc(100vw-145px)] max-w-xs whitespace-pre-line break-all rounded-lg px-4 py-2 lg:max-w-md ${
+              className={`max-w-[calc(100vw-145px)] whitespace-pre-line break-all rounded-lg px-4 py-2 lg:max-w-md ${
                 isSelfMessage(message)
                   ? "rounded-tr-none bg-blue-500 text-white"
                   : "rounded-tl-none bg-gray-200 text-gray-800"

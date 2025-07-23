@@ -44,7 +44,7 @@ request.interceptors.response.use(
       localStorage.setItem("token", newToken);
     }
     if (response.status === 200 && data.code === 0) {
-      if (data.message && response.config.headers.isHideMessage !== "true") {
+      if (data.message) {
         Toast.show({
           content: data.message,
           position: "top",
