@@ -1,5 +1,5 @@
 const config = {
-  appName: "聊天室",
+  appName: "证的后宫",
   apiPrefix: "/api/apis",
   chatPageSize: 5,
 };
