@@ -2,7 +2,9 @@ let ws: any;
 let handlers: any = {};
 
 export const initWebSocket = (token: string) => {
-  ws = new WebSocket(`ws://111.170.33.15:37347/ws?token=${token}`);
+  ws = new WebSocket(
+    `ws://${import.meta.env.VITE_WEBSOCKET_BASE}/ws?token=${token}`,
+  );
   ws.onopen = () => {
     console.log("WebSocket连接已打开");
   };
