@@ -50,6 +50,7 @@ const Chat = () => {
 
   useEffect(() => {
     dispatch(setCurrentChatConversationId({ conversationId }));
+    inputRef.current.focus();
     const pushMessageToRedux = (data: any) => {
       setIsInputInsert(true);
       dispatch(

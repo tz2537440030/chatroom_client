@@ -1,5 +1,5 @@
 import { Button, Input } from "antd-mobile";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 interface Props {
   placeholder?: string;
@@ -10,13 +10,19 @@ interface Props {
 const SearchOrSendInput = forwardRef((props: Props, ref) => {
   const { placeholder, btnText, textLeft, onSearch } = props;
   const [searchText, setSearchText] = useState("");
+  const inputRef = useRef<any>(null);
 
   const clearText = () => {
     setSearchText("");
   };
 
+  const focus = () => {
+    inputRef.current.focus();
+  };
+
   useImperativeHandle(ref, () => ({
     clearText,
+    focus
   }));
 
   return (
@@ -28,6 +34,7 @@ const SearchOrSendInput = forwardRef((props: Props, ref) => {
         onChange={(v) => {
           setSearchText(v);
         }}
+        ref={inputRef}
       />
       <Button
         color="primary"
