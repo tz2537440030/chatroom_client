@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { Avatar } from "antd-mobile";
 import { formatChatDatetime } from "@/utils/utils";
-import { forwardRef, use, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { selectCurrentChatUser } from "@/store/chatSlice";
 import { selectCurrentUser } from "@/store/authSlice";
 

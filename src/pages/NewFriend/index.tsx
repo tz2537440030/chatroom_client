@@ -40,7 +40,7 @@ const NewFriend = () => {
   const { run: runChangeFriendRequestRead } = useRequest<any, any>(
     changeFriendRequestRead,
     {
-      onSuccess: (res, params) => {
+      onSuccess: (_res, params) => {
         dispatch(setFriendRequestRead({ id: params.id }));
       },
     },
@@ -51,7 +51,7 @@ const NewFriend = () => {
     { senderId: string; receiverId: string },
     any
   >(addNewFriend, {
-    onSuccess: (res, params: any) => {
+    onSuccess: (_res, params: any) => {
       sendMessage({
         type: "friend_request",
         senderId: auth.user.id,
@@ -75,7 +75,7 @@ const NewFriend = () => {
     { id: string; status: string },
     any
   >(changeFriendRequestStatus, {
-    onSuccess: (res, params: any) => {
+    onSuccess: () => {
       runGetRequestList({ senderId: auth.user.id });
       sendMessage({
         type: "friend_request",
@@ -126,7 +126,7 @@ const NewFriend = () => {
     });
   };
 
-  const handleReadFriendRequest = async (id: number, receiverId: number) => {
+  const handleReadFriendRequest = async (id: number) => {
     runChangeFriendRequestRead({ id, isRead: true });
   };
 
@@ -179,9 +179,7 @@ const NewFriend = () => {
                 key={item.id}
                 extra={returnRequestStatus(item)}
                 description={item.requestInfo?.username}
-                onClick={() =>
-                  handleReadFriendRequest(item.id, item.receiverId)
-                }
+                onClick={() => handleReadFriendRequest(item.id)}
               >
                 <Badge
                   content={!item.isRead && !item.isSender ? Badge.dot : null}
