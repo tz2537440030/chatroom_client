@@ -1,28 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import autoprefixer from "autoprefixer";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  css: {
-    postcss: {
-      plugins: [
-        {
-          // 正确的插件定义方式
-          postcssPlugin: "my-sorter",
-          Once(root) {
-            // 你的排序逻辑
-            root.nodes.sort((a: any) =>
-              a.source?.input.file.includes("antd-mobile") ? -1 : 1,
-            );
-          },
-        },
-        autoprefixer(),
-      ],
-    },
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"), // 设置 @ 指向 src 目录
