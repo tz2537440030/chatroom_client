@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@rollup/plugin-dynamic-import-vars": "^2.1.5",
     "@types/crypto-js": "^4.2.2",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.0.10",
