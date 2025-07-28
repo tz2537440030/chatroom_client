@@ -17,7 +17,7 @@
         transition
         duration-200
         ease-in-out
-        shadow-sm
+        shadow-sm;
 }
 
 .auth-login-input input {

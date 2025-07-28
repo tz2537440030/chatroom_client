@@ -1,19 +1,19 @@
 .registerForm :global(.adm-list-default .adm-list-body) {
-    @apply border-0 bg-transparent
+    @apply border-0 bg-transparent;
 }
 
 .registerForm :global(.adm-list-item) {
-    @apply p-0 bg-transparent
+    @apply p-0 bg-transparent;
 }
 
 .registerForm :global(.adm-list-item-content) {
-    @apply border-t-0 pr-0
+    @apply border-t-0 pr-0;
 }
 
 .registerForm :global(.adm-list-item-content-main) {
-    @apply p-0
+    @apply p-0;
 }
 
 .registerForm :global(.adm-form-footer) {
-    @apply flex flex-col p-0
+    @apply flex flex-col p-0;
 }
