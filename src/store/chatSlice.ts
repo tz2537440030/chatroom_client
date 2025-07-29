@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { set } from "lodash";
 
 // 从localStorage初始化token
 const getInitialChatState = () => {
   return {
+    isShowEmoji: false,
     currentChatUser: {},
     currentChatMessage: [],
     conversationList: [],
@@ -15,6 +17,10 @@ export const chatSlice = createSlice({
   name: "chat",
   initialState: getInitialChatState(),
   reducers: {
+    setIsShowEmoji: (state, action) => {
+      const { isShowEmoji } = action.payload;
+      state.isShowEmoji = isShowEmoji;
+    },
     setCurrentChatUser: (state, action) => {
       const { currentChatUser } = action.payload;
       state.currentChatUser = currentChatUser;
@@ -83,11 +89,15 @@ export const {
   setConversation,
   setCurrentChatConversationId,
   clearCurrentConversationUnreadCount,
+  setIsShowEmoji,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
 
 // Selectors
+export const selectIsShowEmoji = (state: { chat: { isShowEmoji: any } }) =>
+  state.chat.isShowEmoji;
+
 export const selectCurrentChatUser = (state: {
   chat: { currentChatUser: any };
 }) => state.chat.currentChatUser;

@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { Avatar } from "antd-mobile";
 import { formatChatDatetime } from "@/utils/utils";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import { selectCurrentChatUser } from "@/store/chatSlice";
+import { selectCurrentChatUser, selectIsShowEmoji } from "@/store/chatSlice";
 import { selectCurrentUser } from "@/store/authSlice";
 
 interface Message {
@@ -32,6 +32,7 @@ const ChatBubble = forwardRef(
     const userId = useSelector((state: any) => state.auth.user.id);
     const currentChatUser = useSelector(selectCurrentChatUser);
     const currentUser = useSelector(selectCurrentUser);
+    const isShowEmoji = useSelector(selectIsShowEmoji);
     const messageEndRef = useRef<any>(null);
     const chatContainerRef = useRef<any>(null);
     const chatContainerScroll = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
@@ -69,7 +70,7 @@ const ChatBubble = forwardRef(
 
     return (
       <div
-        style={{ height: "calc(100vh - 150px)" }}
+        style={{ height: `calc(100vh - ${isShowEmoji ? "468px" : "150px"})` }}
         className="flex flex-col overflow-y-scroll px-2"
         ref={chatContainerRef}
       >
