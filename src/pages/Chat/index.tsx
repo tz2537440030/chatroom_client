@@ -42,7 +42,7 @@ const Chat = () => {
       }
       dispatch(
         pushMessage({
-          message: res.messages,
+          message: res.data,
         }),
       );
     },
@@ -55,7 +55,7 @@ const Chat = () => {
       setIsInputInsert(true);
       dispatch(
         pushMessage({
-          message: [data.message],
+          message: [data.data],
           isInputInsert: true,
         }),
       );

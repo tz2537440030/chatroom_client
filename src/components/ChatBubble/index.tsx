@@ -36,7 +36,7 @@ const ChatBubble = forwardRef(
     const chatContainerRef = useRef<any>(null);
     const chatContainerScroll = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
     const isSelfMessage = (message: Message) =>
-      message.senderId === Number(userId);
+      message?.senderId === Number(userId);
 
     useEffect(() => {
       const chatContainer = chatContainerRef.current;
@@ -74,9 +74,9 @@ const ChatBubble = forwardRef(
         ref={chatContainerRef}
       >
         {loading && <div className="flex-center">加载中...</div>}
-        {messages.map((message: Message) => (
+        {messages?.map((message: Message) => (
           <div
-            key={message.id}
+            key={message?.id}
             className={`flex ${isSelfMessage(message) ? "justify-end" : "justify-start"} mb-4`}
           >
             {!isSelfMessage(message) && (
@@ -84,7 +84,7 @@ const ChatBubble = forwardRef(
             )}
             {isSelfMessage(message) && (
               <div className="mr-2 flex max-w-[65px] items-end text-xs text-gray-400">
-                {formatChatDatetime(message.createdAt)}
+                {formatChatDatetime(message?.createdAt)}
               </div>
             )}
             <div
@@ -94,11 +94,11 @@ const ChatBubble = forwardRef(
                   : "rounded-tl-none bg-gray-200 text-gray-800"
               }`}
             >
-              <div className="text-sm">{message.content}</div>
+              <div className="text-sm">{message?.content}</div>
             </div>
             {!isSelfMessage(message) && (
               <div className="ml-2 flex max-w-[65px] items-end text-xs text-gray-400">
-                {formatChatDatetime(message.createdAt)}
+                {formatChatDatetime(message?.createdAt)}
               </div>
             )}
             {isSelfMessage(message) && (
