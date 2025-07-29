@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { set } from "lodash";
 
 // 从localStorage初始化token
 const getInitialChatState = () => {
