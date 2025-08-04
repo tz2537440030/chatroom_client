@@ -4,9 +4,9 @@ import {
   UserOutline,
   UserContactOutline,
 } from "antd-mobile-icons";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useMatches, useNavigate } from "react-router-dom";
 import styles from "./index.module.css";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import useRequest from "@/hooks/useRequest";
 import { getFriendList, getFriendRequestList } from "@/services/contact";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,17 +27,31 @@ import { NEW_FRIEND_REQUEST, UPDATE_CONVERSATION_LIST } from "@/const";
 import { changeMessageStatus } from "@/services/chat";
 import { selectCurrentUser } from "@/store/authSlice";
 
+const OutletWrapper = forwardRef((_props, ref) => {
+  return <Outlet context={{ ref }} />;
+});
+
 const HomeLayout = (props: { isBlank?: boolean }) => {
   const { isBlank } = props;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
+  const matches = useMatches(); // 所有匹配的路由
+  const current: any = matches[matches.length - 1];
+  const title = current?.handle?.title;
+  const right =
+    typeof current?.handle?.right === "function"
+      ? current.handle?.right(() => {
+          outletRef.current?.handleRightClick?.();
+        })
+      : null;
+  const outletRef = useRef<any>(null);
   const currentChatUser = useSelector(selectCurrentChatUser);
   const currentConversationId = useSelector(selectCurrentChatConversationId);
   const totalUnreadMessageCount = useSelector(selectTotalUnreadMessageCount);
   const friendRequestList = useSelector(selectFriendRequestList);
   const user = useSelector(selectCurrentUser);
-  const [title, setTitle] = useState("消息");
+
   const { pathname } = location;
 
   const tabs = [
@@ -86,7 +100,6 @@ const HomeLayout = (props: { isBlank?: boolean }) => {
   });
 
   const setRouteActive = (value: string) => {
-    setTitle(tabs.find((item) => item.key === value)?.title || "");
     navigate(value);
   };
 
@@ -119,6 +132,7 @@ const HomeLayout = (props: { isBlank?: boolean }) => {
         className={styles["layout-header"]}
         onBack={handleBack}
         back={isBlank ? "" : null}
+        right={right || null}
       >
         {currentChatUser?.nickname || title}
       </NavBar>
@@ -126,7 +140,7 @@ const HomeLayout = (props: { isBlank?: boolean }) => {
         className={styles["layout-main"]}
         style={{ marginBottom: isBlank ? "0" : "4rem" }}
       >
-        <Outlet />
+        <OutletWrapper ref={outletRef} />
       </div>
       {!isBlank && (
         <TabBar

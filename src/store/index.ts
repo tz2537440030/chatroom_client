@@ -5,12 +5,14 @@ import storage from "redux-persist/lib/storage";
 import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import chatReducer from "./chatSlice";
+import momentReducer from "./momentSlice";
 
 // 组合reducers
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   chat: chatReducer,
+  moment: momentReducer,
 });
 
 // 持久化配置

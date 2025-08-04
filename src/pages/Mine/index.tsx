@@ -14,7 +14,9 @@ const Mine = () => {
     {
       name: "朋友圈",
       icon: <PictureOutline />,
-      onClick: () => {},
+      onClick: () => {
+        navigate("/layout-blank/moment");
+      },
     },
     {
       name: "退出登录",

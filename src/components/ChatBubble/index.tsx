@@ -1,8 +1,12 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "antd-mobile";
 import { formatChatDatetime } from "@/utils/utils";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import { selectCurrentChatUser, selectIsShowEmoji } from "@/store/chatSlice";
+import {
+  selectCurrentChatUser,
+  selectIsShowEmoji,
+  setIsShowEmoji,
+} from "@/store/chatSlice";
 import { selectCurrentUser } from "@/store/authSlice";
 
 interface Message {
@@ -29,6 +33,7 @@ const ChatBubble = forwardRef(
     },
     ref,
   ) => {
+    const dispatch = useDispatch();
     const userId = useSelector((state: any) => state.auth.user.id);
     const currentChatUser = useSelector(selectCurrentChatUser);
     const currentUser = useSelector(selectCurrentUser);
@@ -38,6 +43,12 @@ const ChatBubble = forwardRef(
     const chatContainerScroll = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
     const isSelfMessage = (message: Message) =>
       message?.senderId === Number(userId);
+
+    const handleTouchStart = () => {
+      if (isShowEmoji) {
+        dispatch(setIsShowEmoji({ isShowEmoji: false }));
+      }
+    };
 
     useEffect(() => {
       const chatContainer = chatContainerRef.current;
@@ -70,9 +81,13 @@ const ChatBubble = forwardRef(
 
     return (
       <div
-        style={{ height: `calc(100vh - ${isShowEmoji ? "468px" : "150px"})` }}
+        style={{
+          height: `calc(100vh - ${isShowEmoji ? "468px" : "150px"})`,
+          transition: "height 0.3s ease-in-out",
+        }}
         className="flex flex-col overflow-y-scroll px-2"
         ref={chatContainerRef}
+        onTouchStart={handleTouchStart}
       >
         {loading && <div className="flex-center">加载中...</div>}
         {messages?.map((message: Message) => (

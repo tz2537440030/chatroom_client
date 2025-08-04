@@ -125,6 +125,7 @@ const Chat = () => {
           placeholder="请输入"
           btnText="发送"
           textLeft
+          isShowEmojiBtn={true}
           onSearch={handleSendMsg}
         />
       </div>

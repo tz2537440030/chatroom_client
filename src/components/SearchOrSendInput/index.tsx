@@ -15,10 +15,11 @@ interface Props {
   placeholder?: string;
   btnText?: string;
   textLeft?: boolean;
+  isShowEmojiBtn?: boolean;
   onSearch: (text: string) => void;
 }
 const SearchOrSendInput = forwardRef((props: Props, ref) => {
-  const { placeholder, btnText, textLeft, onSearch } = props;
+  const { placeholder, btnText, textLeft, isShowEmojiBtn, onSearch } = props;
   const dispatch = useDispatch();
   const isShowEmoji = useSelector(selectIsShowEmoji);
   const [searchText, setSearchText] = useState("");
@@ -66,11 +67,13 @@ const SearchOrSendInput = forwardRef((props: Props, ref) => {
           }}
           ref={inputRef}
         />
-        <SmileOutline
-          fontSize={40}
-          className="mr-3"
-          onClick={handleChooseEmoji}
-        />
+        {isShowEmojiBtn && (
+          <SmileOutline
+            fontSize={40}
+            className="mr-3"
+            onClick={handleChooseEmoji}
+          />
+        )}
         <Button
           color="primary"
           size="middle"
@@ -81,7 +84,7 @@ const SearchOrSendInput = forwardRef((props: Props, ref) => {
           {btnText || "搜索"}
         </Button>
       </div>
-      {isShowEmoji && (
+      {isShowEmoji && isShowEmojiBtn && (
         <EmojiKeyboard
           height={320}
           containerStyle={{ width: "100%" }}

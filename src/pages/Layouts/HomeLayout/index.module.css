@@ -13,3 +13,7 @@
 .layout-tabbar :global(.adm-tab-bar-wrap) {
     @apply w-full;
 }
+
+.layout-header :global(.adm-nav-bar-right) {
+    @apply flex justify-end;
+}

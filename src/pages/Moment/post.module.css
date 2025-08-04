@@ -1,0 +1,3 @@
+.post-form :global(.adm-image-uploader-upload-button) {
+    @apply flex justify-center items-center;
+}
