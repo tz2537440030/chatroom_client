@@ -43,8 +43,8 @@ const Post = () => {
   };
 
   const handleUpload = async (file: File) => {
-    if (!file) return;
     try {
+      if (!file) return { url: "" };
       const formData = new FormData();
       formData.append("file", file);
       const res: any = await uploadFile(formData);
@@ -52,9 +52,16 @@ const Post = () => {
         return {
           url: res,
         };
+      } else {
+        return {
+          url: "",
+        };
       }
     } catch (error) {
       alert(error);
+      return {
+        url: "",
+      };
     }
   };
 
